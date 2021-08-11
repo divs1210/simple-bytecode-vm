@@ -8,11 +8,28 @@
   (fn [exp]
     (type exp)))
 
+(defmulti compile-form
+  (fn [form]
+    (first form)))
+
+
 (defmethod compile Number [exp]
   [[:load-const exp]])
 
+(defmethod compile clojure.lang.ISeq [exp]
+  (compile-form exp))
+
+(defmethod compile-form 'def [[_ name subexp]]
+  (u/vconcat (compile subexp)
+             [[:store-name name]]))
+
+
 (defmethod compile :default [exp]
-  (u/throw+ "Error: compile not defined for: " exp))
+  (u/throw+ "Error: " #'compile " not defined for:\n\t" exp))
+
+(defmethod compile-form :default [form]
+  (u/throw+ "Error: " #'compile-form " not defined for:\n\t" form))
+
 
 (defn -main
   [& [filename]]
@@ -26,3 +43,10 @@
       (catch Throwable e
         (println "Error:" (.getMessage e))))
     (println "Error: no input file provided!")))
+
+
+(comment
+  "Helper fns"
+  (remove-all-methods compile)
+  (remove-all-methods compile-form)
+  )

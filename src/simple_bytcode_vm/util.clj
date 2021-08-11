@@ -2,10 +2,16 @@
   (:require [clojure.pprint :as pprint]
             [clojure.string :as str]))
 
-(defn throw+ [& msgs]
+(defn throw+
+  [& msgs]
   (throw (Exception. (str/join msgs))))
 
-(defn pretty-spit [filename data]
+(defn pretty-spit
+  [filename data]
   (spit filename
         (with-out-str
           (pprint/pprint data))))
+
+(defn vconcat
+  [& seqs]
+  (vec (apply concat seqs)))
