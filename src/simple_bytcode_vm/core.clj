@@ -8,7 +8,7 @@
 
 (defn eval
   ([exp]
-   (eval (env/base-env) exp))
+   (eval exp (env/base-env)))
   ([exp env]
    (try
      (interpreter/eval (compiler/compile exp) env)
