@@ -1,7 +1,7 @@
 (ns simple-bytcode-vm.compiler
   (:gen-class)
   (:refer-clojure :exclude [compile])
-  (:require [clojure.string :as str]
+  (:require [clojure.edn :as edn]
             [simple-bytcode-vm.util :as u]))
 
 (defmulti compile
@@ -54,16 +54,13 @@
 
 (defn -main
   [& [filename]]
-  (if filename
-    (try
-      (let [source-code   (slurp filename)
-            byte-code     (compile source-code)
-            [filename _]  (str/split filename #"\.")
-            out-file-name (str filename ".edn")]
-        (u/pretty-spit out-file-name byte-code))
-      (catch Throwable e
-        (println "Error:" (.getMessage e))))
-    (println "Error: no input file provided!")))
+  (try
+    (let [source-code   (edn/read-string (slurp filename))
+          byte-code     (compile source-code)
+          out-file-name (str filename ".edn")]
+      (u/pretty-spit out-file-name byte-code))
+    (catch Throwable e
+      (println "Error:" (.getMessage e)))))
 
 
 (comment
