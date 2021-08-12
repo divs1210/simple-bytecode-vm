@@ -13,4 +13,4 @@
         (interpreter/eval code))
       (repl/repl))
     (catch Throwable e
-      (println (.getMessage e)))))
+      (.printStackTrace e))))

@@ -13,7 +13,7 @@
    (try
      (interpreter/eval (compiler/compile exp) env)
      (catch Throwable e
-       (.getMessage e)))))
+       (.printStackTrace e)))))
 
 (defn repl []
   (let [env (env/base-env)]

@@ -31,7 +31,7 @@
 
 (defmethod compile :default
   [exp]
-  (u/throw+ "Error: " #'compile " not defined for:\n\t" exp))
+  (u/throw+ #'compile " not defined for:\n\t" exp))
 
 
 (defmethod compile-form 'def
@@ -78,7 +78,7 @@
           out-file-name (str filename ".edn")]
       (u/pretty-spit out-file-name byte-code))
     (catch Throwable e
-      (println "Error:" (.getMessage e)))))
+      (.printStackTrace e))))
 
 
 (comment

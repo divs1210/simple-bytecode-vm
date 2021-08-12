@@ -71,7 +71,7 @@
 
 (defmethod eval-instruction :default
   [instruction _]
-  (u/throw+ "Error: " #'eval-instruction " not defined for:\n\t" instruction))
+  (u/throw+ #'eval-instruction " not defined for:\n\t" instruction))
 
 
 (defn eval

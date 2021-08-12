@@ -42,4 +42,4 @@
     (recur (::parent @env) k)
 
     :else
-    (u/throw+ "Error: " k " not defined!")))
+    (u/throw+ k " not defined!")))
