@@ -7,4 +7,5 @@
   :main simple-bytcode-vm.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :aliases {"compile" ["trampoline" "run" "-m" "simple-bytcode-vm.compiler"]})
+  :aliases {"-compile" ["trampoline" "run" "-m" "simple-bytcode-vm.compiler"]
+            "-run"     ["trampoline" "run" "-m" "simple-bytcode-vm.core"]})
