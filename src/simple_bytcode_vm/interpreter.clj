@@ -26,6 +26,15 @@
    :stack (cons (env/lookup env name) stack)
    :env env})
 
+(defmethod eval-instruction :call-function
+  [[_ nargs] {:keys [pc stack env]}]
+  (let [args (reverse (take nargs stack))
+        f    (nth stack nargs)
+        stack (drop (inc nargs) stack)]
+    {:pc (inc' pc)
+     :stack (cons (apply f args) stack)
+     :env env}))
+
 (defmethod eval-instruction :default
   [instruction _]
   (u/throw+ "Error: " #'eval-instruction " not defined for:\n\t" instruction))

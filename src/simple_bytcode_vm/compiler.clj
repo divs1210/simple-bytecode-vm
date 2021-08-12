@@ -13,28 +13,39 @@
     (first form)))
 
 
-(defmethod compile Number [exp]
+(defmethod compile Number
+  [exp]
   [[:load-const exp]])
 
-(defmethod compile clojure.lang.Symbol [exp]
+(defmethod compile clojure.lang.Symbol
+  [exp]
   [[:load-name exp]])
 
-(defmethod compile clojure.lang.ISeq [exp]
+(defmethod compile clojure.lang.ISeq
+  [exp]
   (compile-form exp))
 
-(defmethod compile-form 'def [[_ name subexp]]
+(defmethod compile :default
+  [exp]
+  (u/throw+ "Error: " #'compile " not defined for:\n\t" exp))
+
+
+(defmethod compile-form 'def
+  [[_ name subexp]]
   (u/vconcat (compile subexp)
              [[:store-name name]]))
 
-(defmethod compile-form 'do [[_ & exps]]
-  (vec (mapcat compile exps)))
+(defmethod compile-form 'do
+  [[_ & exps]]
+  (u/vmapcat compile exps))
 
-
-(defmethod compile :default [exp]
-  (u/throw+ "Error: " #'compile " not defined for:\n\t" exp))
-
-(defmethod compile-form :default [form]
-  (u/throw+ "Error: " #'compile-form " not defined for:\n\t" form))
+(defmethod compile-form :default
+  [[f & args]]
+  (let [nargs (count args)
+        arg-code (u/vmapcat compile args)]
+    (u/vconcat (compile f)
+               arg-code
+               [[:call-function nargs]])))
 
 
 (defn -main

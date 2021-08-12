@@ -15,3 +15,7 @@
 (defn vconcat
   [& seqs]
   (vec (apply concat seqs)))
+
+(defn vmapcat
+  [f coll]
+  (vec (mapcat f coll)))
