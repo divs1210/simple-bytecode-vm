@@ -60,14 +60,13 @@
      :env env}))
 
 (defmethod eval-instruction :make-function
-  [_ {:keys [pc stack env]}]
-  (let [[body params & stack] stack
-        the-fn (make-fn {:params params
-                         :body body
-                         :env env})]
-    {:pc (+' pc 1)
-     :stack (cons the-fn stack)
-     :env env}))
+  [[_ params body] {:keys [pc stack env]}]
+  {:pc (+' pc 1)
+   :stack (cons (make-fn {:params params
+                          :body body
+                          :env env})
+                stack)
+   :env env})
 
 (defmethod eval-instruction :default
   [instruction _]

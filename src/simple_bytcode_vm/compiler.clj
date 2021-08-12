@@ -57,9 +57,7 @@
 
 (defmethod compile-form 'fn
   [[_ params body]]
-  [[:load-const params]
-   [:load-const (compile body)]
-   [:make-function]])
+  [[:make-function params (compile body)]])
 
 (defmethod compile-form :default
   [[f & args]]
