@@ -20,6 +20,12 @@
    :stack (rest stack)
    :env (env/assoc! env name (first stack))})
 
+(defmethod eval-instruction :load-name
+  [[_ name] {:keys [pc stack env]}]
+  {:pc (inc' pc)
+   :stack (cons (env/lookup env name) stack)
+   :env env})
+
 (defmethod eval-instruction :default
   [instruction _]
   (u/throw+ "Error: " #'eval-instruction " not defined for:\n\t" instruction))

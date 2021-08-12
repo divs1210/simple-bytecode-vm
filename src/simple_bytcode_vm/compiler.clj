@@ -16,6 +16,9 @@
 (defmethod compile Number [exp]
   [[:load-const exp]])
 
+(defmethod compile clojure.lang.Symbol [exp]
+  [[:load-name exp]])
+
 (defmethod compile clojure.lang.ISeq [exp]
   (compile-form exp))
 
