@@ -1,9 +1,18 @@
 (ns simple-bytcode-vm.env
   (:refer-clojure :exclude [assoc! extend])
-  (:require [simple-bytcode-vm.util :as u]))
+  (:require [clojure.string :as str]
+            [simple-bytcode-vm.util :as u]))
 
 (defn base-env []
-  (atom {}))
+  (atom {'+ +'
+         '* *'
+         '- -
+         '/ /
+         '** #(Math/pow %1 %2)
+
+         'print (fn [& args]
+                  (print (str/join args))
+                  (flush))}))
 
 (defn extend [env]
   (atom {::parent env}))
