@@ -17,6 +17,10 @@
   [exp]
   [[:load-const exp]])
 
+(defmethod compile String
+  [exp]
+  [[:load-const exp]])
+
 (defmethod compile clojure.lang.Symbol
   [exp]
   [[:load-name exp]])
