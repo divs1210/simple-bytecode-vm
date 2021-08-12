@@ -55,6 +55,12 @@
                [[:relative-jump end-offset]]
                then-bytecode)))
 
+(defmethod compile-form 'fn
+  [[_ params body]]
+  [[:load-const params]
+   [:load-const (compile body)]
+   [:make-function]])
+
 (defmethod compile-form :default
   [[f & args]]
   (let [nargs (count args)

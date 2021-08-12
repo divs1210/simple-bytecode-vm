@@ -22,8 +22,10 @@
                   (print (str/join args))
                   (flush))}))
 
-(defn extend [env]
-  (atom {::parent env}))
+(defn extend
+  [env bindings]
+  (atom (merge {::parent env}
+               bindings)))
 
 (defn assoc!
   [env & kvs]
