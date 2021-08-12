@@ -10,6 +10,14 @@
          '/ /
          '** #(Math/pow %1 %2)
 
+         '< <
+         '> >
+         '= =
+         '== ==
+         '<= <=
+         '>= >=
+         'not not
+
          'print (fn [& args]
                   (print (str/join args))
                   (flush))}))

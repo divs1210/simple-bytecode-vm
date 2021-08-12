@@ -35,6 +35,17 @@
      :stack (cons (apply f args) stack)
      :env env}))
 
+(defmethod eval-instruction :relative-jump
+  [[_ offset] state]
+  (update state :pc +' offset))
+
+(defmethod eval-instruction :relative-jump-if-true
+  [[_ offset] {:keys [pc stack env]}]
+  (let [[cond-val & stack] stack]
+    {:pc (+' pc (if cond-val offset 1))
+     :stack stack
+     :env env}))
+
 (defmethod eval-instruction :default
   [instruction _]
   (u/throw+ "Error: " #'eval-instruction " not defined for:\n\t" instruction))

@@ -43,6 +43,18 @@
   [[_ & exps]]
   (u/vmapcat compile exps))
 
+(defmethod compile-form 'if
+  [[_ cond-exp then-exp else-exp]]
+  (let [then-bytecode (compile then-exp)
+        else-bytecode (compile else-exp)
+        then-offset (+' 2 (count else-bytecode))
+        end-offset  (+' 1 (count then-bytecode))]
+    (u/vconcat (compile cond-exp)
+               [[:relative-jump-if-true then-offset]]
+               else-bytecode
+               [[:relative-jump end-offset]]
+               then-bytecode)))
+
 (defmethod compile-form :default
   [[f & args]]
   (let [nargs (count args)
