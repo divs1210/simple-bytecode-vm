@@ -26,6 +26,9 @@
   (u/vconcat (compile subexp)
              [[:store-name name]]))
 
+(defmethod compile-form 'do [[_ & exps]]
+  (vec (mapcat compile exps)))
+
 
 (defmethod compile :default [exp]
   (u/throw+ "Error: " #'compile " not defined for:\n\t" exp))
