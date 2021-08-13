@@ -1,36 +1,31 @@
 # simple-bytcode-vm
 
-FIXME: description
+A simple bytecode compiler + VM for a Clojure - inspired lisp, written in Clojure.
 
-## Installation
-
-Download from http://example.com/FIXME.
+Inspired by [this brilliant post](https://bernsteinbear.com/blog/bytecode-interpreters/).
 
 ## Usage
 
-FIXME: explanation
+### Compile a file
 
-    $ java -jar simple-bytcode-vm-0.1.0-standalone.jar [args]
+    $ lein -compile examples/fact.lisp
 
-## Options
+### Run a compiled bytecode file
 
-FIXME: listing of options this app accepts.
+    $ lein -run examples/fact.lisp.edn 5
 
-## Examples
+### REPL
 
-...
+    $ rlwrap lein -repl
 
-### Bugs
+## Future work
 
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+- JIT
+- AOT bytecode -> native compiler
 
 ## License
 
-Copyright © 2021 FIXME
+Copyright © 2021 Divyansh Prakash
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
