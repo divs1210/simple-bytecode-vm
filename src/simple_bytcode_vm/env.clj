@@ -1,6 +1,7 @@
 (ns simple-bytcode-vm.env
   (:refer-clojure :exclude [assoc! extend])
-  (:require [clojure.string :as str]
+  (:require [clojure.edn :as edn]
+            [clojure.string :as str]
             [simple-bytcode-vm.util :as u]))
 
 (def ^:private ^:const base-env*
@@ -63,6 +64,7 @@
    'type type
    'int bigint
    'char char
+   'read-string edn/read-string
 
    'int? integer?
    'number? number?

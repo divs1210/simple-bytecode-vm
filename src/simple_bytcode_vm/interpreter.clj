@@ -98,7 +98,7 @@
           code (edn/read-string text)
           env  (env/assoc!
                 (env/base-env)
-                'command-line-args (fn [] args))]
+                'command-line-args #(vec args))]
       (eval code env))
     (catch Throwable e
       (.printStackTrace e))))
