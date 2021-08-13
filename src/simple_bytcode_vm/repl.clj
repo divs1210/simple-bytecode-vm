@@ -23,3 +23,6 @@
       (-> (edn/read)
           (eval env)
           println))))
+
+(defn -main [& _]
+  (repl))

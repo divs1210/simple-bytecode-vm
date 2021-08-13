@@ -1,6 +1,8 @@
 (ns simple-bytcode-vm.interpreter
+  (:gen-class)
   (:refer-clojure :exclude [eval])
-  (:require [simple-bytcode-vm.env :as env]
+  (:require [clojure.edn :as edn]
+            [simple-bytcode-vm.env :as env]
             [simple-bytcode-vm.util :as u]))
 
 (declare eval)
@@ -87,6 +89,19 @@
          (let [ins (instructions pc)]
            (recur (eval-instruction ins state)))
          (first stack))))))
+
+
+(defn -main
+  [& [edn-bytecode-filename :as args]]
+  (try
+    (let [text (slurp edn-bytecode-filename)
+          code (edn/read-string text)
+          env  (env/assoc!
+                (env/base-env)
+                'command-line-args (fn [] args))]
+      (eval code env))
+    (catch Throwable e
+      (.printStackTrace e))))
 
 
 (comment
