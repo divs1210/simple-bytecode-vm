@@ -13,17 +13,32 @@
     (first form)))
 
 
+(defn load-const [exp]
+  [[:load-const exp]])
+
 (defmethod compile Number
   [exp]
-  [[:load-const exp]])
+  (load-const exp))
 
 (defmethod compile String
   [exp]
-  [[:load-const exp]])
+  (load-const exp))
+
+(defmethod compile clojure.lang.Keyword
+  [exp]
+  (load-const exp))
 
 (defmethod compile clojure.lang.Symbol
   [exp]
   [[:load-name exp]])
+
+(defmethod compile clojure.lang.IPersistentVector
+  [exp]
+  (compile-form (cons 'vector exp)))
+
+(defmethod compile clojure.lang.IPersistentMap
+  [exp]
+  (compile-form (cons 'hash-map (mapcat identity exp))))
 
 (defmethod compile clojure.lang.ISeq
   [exp]
