@@ -32,7 +32,7 @@
 
    'println
    (fn [& args]
-     (apply print args)
+     (print (str/join args))
      (print "\n"))
 
    ;; Collections
