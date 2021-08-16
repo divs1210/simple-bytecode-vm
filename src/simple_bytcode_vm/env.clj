@@ -83,10 +83,11 @@
   (atom (merge {::parent env}
                bindings)))
 
-(defn assoc!
+(defmacro assoc!
   [env & kvs]
-  (swap! env #(apply clojure.core/assoc % kvs))
-  env)
+  `(let [env# ~env]
+     (swap! ~env #(assoc % ~@kvs))
+     env#))
 
 (defn lookup
   [env k]
