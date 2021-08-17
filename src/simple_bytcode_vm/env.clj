@@ -76,17 +76,19 @@
           (str/join args))})
 
 (defn base-env []
-  (atom base-env*))
+  (atom (transient base-env*)))
 
 (defn extend
   [env bindings]
-  (atom (merge {::parent env}
-               bindings)))
+  (atom
+   (transient
+    (merge {::parent env}
+           bindings))))
 
 (defmacro assoc!
   [env & kvs]
   `(let [env# ~env]
-     (swap! ~env #(assoc % ~@kvs))
+     (swap! ~env #(clojure.core/assoc! % ~@kvs))
      env#))
 
 (defn lookup
