@@ -88,7 +88,9 @@
 (defmacro assoc!
   [env & kvs]
   `(let [env# ~env]
-     (swap! ~env #(clojure.core/assoc! % ~@kvs))
+     (swap! env#
+            (fn [e#]
+              (clojure.core/assoc! e# ~@kvs)))
      env#))
 
 (defn lookup
