@@ -16,8 +16,7 @@
 
    [:set idx e]
    (let [v (walk e env)]
-     (env/assoc! env idx v)
-     v)
+     (env/assoc! env idx v))
 
    [:bin op e1 e2]
    (let [f  (resolve op)
@@ -56,8 +55,7 @@
    (let [f (->closure e)]
      (fn [env]
        (let [v (f env)]
-         (env/assoc! env idx v)
-         v)))
+         (env/assoc! env idx v))))
 
    [:bin op e1 e2]
    (let [f  (resolve op)
@@ -88,6 +86,50 @@
   (let [cc (->closure expr)
         env (env/base-env)]
     #(cc env)))
+
+
+;; Compile to Clojure
+;; ==================
+(defn ->Clj
+  [expr env-sym]
+  (match expr
+   [:lit e]
+   e
+
+   [:var idx]
+   `(env/lookup ~env-sym '~idx)
+
+   [:set idx e]
+   (let [v (->Clj e env-sym)]
+     `(env/assoc! ~env-sym '~idx ~v))
+
+   [:bin op e1 e2]
+   (let [f  (resolve op)
+         v1 (->Clj e1 env-sym)
+         v2 (->Clj e2 env-sym)]
+     `(~f ~v1 ~v2))
+
+   [:do & forms]
+   (let [compiled-forms (map #(->Clj % env-sym)
+                             forms)]
+     `(do ~@compiled-forms))
+
+   [:while e-condition e-body]
+   (let [cond-form (->Clj e-condition env-sym)
+         body-form (->Clj e-body env-sym)]
+     `(while ~cond-form
+        ~body-form))))
+
+(defn compiled-to-clj
+  [expr]
+  (let [env-sym (gensym "env_")]
+    `(let [~env-sym (env/base-env)]
+       (fn []
+         ~(->Clj expr env-sym)))))
+
+(defn compiled-to-clj-closure
+  [expr]
+  (eval (compiled-to-clj expr)))
 
 
 ;; Naive bytecode compiler + interpreter
@@ -196,7 +238,7 @@
           [:set n [:bin -  [:var n] [:lit 1]]]]]
 
         [:var f]])
-    
+
 
     ;; Clojure code without interpretation overhead
     ;; ============================================
@@ -259,6 +301,9 @@
 
       [:compliled-to-closure
        (compiled-to-closure code)]
+
+      [:compliled-to-clj
+       (compiled-to-clj-closure code)]
 
       [:compiled-to-bytecode
        (compiled-to-bytecode code)]
