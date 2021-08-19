@@ -3,6 +3,22 @@
             [simple-bytcode-vm.env :as env]
             [simple-bytcode-vm.util :as u]))
 
+;; Util
+;; ====
+(let [ops {'+ +'
+           '- -
+           '* *'
+           '/ /
+           '> >
+           '< <
+           '= ==
+           '<= <=
+           '>= >=}]
+  (defn get-binary
+    [op]
+    (get ops op)))
+
+
 ;; Naive AST Walker
 ;; ================
 (defn walk
@@ -19,10 +35,10 @@
      (env/assoc! env idx v))
 
    [:bin op e1 e2]
-   (let [f  (resolve op)
+   (let [op (get-binary op)
          v1 (walk e1 env)
          v2 (walk e2 env)]
-     (f v1 v2))
+     (op v1 v2))
 
    [:do & forms]
    (reduce (fn [_ form]
@@ -58,13 +74,13 @@
          (env/assoc! env idx v))))
 
    [:bin op e1 e2]
-   (let [f  (resolve op)
+   (let [op (get-binary op)
          f1 (->closure e1)
          f2 (->closure e2)]
      (fn [env]
        (let [v1 (f1 env)
              v2 (f2 env)]
-         (f v1 v2))))
+         (op v1 v2))))
 
    [:do & forms]
    (let [compiled-forms (map ->closure forms)]
@@ -104,10 +120,10 @@
      `(env/assoc! ~env-sym '~idx ~v))
 
    [:bin op e1 e2]
-   (let [f  (resolve op)
+   (let [op (get-binary op)
          v1 (->Clj e1 env-sym)
          v2 (->Clj e2 env-sym)]
-     `(~f ~v1 ~v2))
+     `(~op ~v1 ~v2))
 
    [:do & forms]
    (let [compiled-forms (map #(->Clj % env-sym)
@@ -190,7 +206,7 @@
 
          [:call-bin op]
          (let [[e2 e1 & stack] stack
-               f (resolve op)
+               f (get-binary op)
                res (f e1 e2)]
            (recur (inc pc)
                   (cons res stack)))
@@ -234,7 +250,7 @@
 
         [:while [:bin > [:var n] [:lit 1]]
          [:do
-          [:set f [:bin *' [:var n] [:var f]]]
+          [:set f [:bin * [:var n] [:var f]]]
           [:set n [:bin -  [:var n] [:lit 1]]]]]
 
         [:var f]])
