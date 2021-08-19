@@ -5,18 +5,23 @@
 
 ;; Util
 ;; ====
-(let [ops {'+ +'
-           '- -
-           '* *'
-           '/ /
-           '> >
-           '< <
-           '= ==
-           '<= <=
-           '>= >=}]
+(let [ops {'+ '+'
+           '- '-
+           '* '*'
+           '/ '/
+           '> '>
+           '< '<
+           '= '==
+           '<= '<=
+           '>= '>=}]
   (defn get-binary
-    [op]
-    (get ops op)))
+    ([op]
+     (get-binary op true))
+    ([op resolve?]
+     (let [op (get ops op)]
+       (if resolve?
+         @(resolve op)
+         op)))))
 
 
 ;; Naive AST Walker
@@ -120,7 +125,7 @@
      `(env/assoc! ~env-sym '~idx ~v))
 
    [:bin op e1 e2]
-   (let [op (get-binary op)
+   (let [op (get-binary op false)
          v1 (->Clj e1 env-sym)
          v2 (->Clj e2 env-sym)]
      `(~op ~v1 ~v2))
