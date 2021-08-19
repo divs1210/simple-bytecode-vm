@@ -148,6 +148,44 @@
   (eval (compiled-to-clj expr)))
 
 
+;; Compile to Scheme
+;; =================
+(defn ->Scheme
+  [expr]
+  (match expr
+   [:lit e]
+   e
+
+   [:var idx]
+   idx
+
+   [:set idx e]
+   (let [v (->Scheme e)]
+     (list 'set! idx v))
+
+   [:bin op e1 e2]
+   (let [v1 (->Scheme e1)
+         v2 (->Scheme e2)]
+     (list op v1 v2))
+
+   [:do & forms]
+   (let [compiled-forms (map ->Scheme forms)]
+     (cons 'begin compiled-forms))
+
+   [:while e-condition e-body]
+   (let [cond-form (->Scheme e-condition)
+         body-form (->Scheme e-body)
+         recur-tag (gensym 'recur)]
+     (list
+      'let recur-tag ()
+      (list
+       'when cond-form
+       (list
+        'begin
+        body-form
+        (list recur-tag)))))))
+
+
 ;; Naive bytecode compiler + interpreter
 ;; =====================================
 (defn ->bytecode
